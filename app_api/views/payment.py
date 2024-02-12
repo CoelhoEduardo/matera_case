@@ -1,11 +1,13 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from ..models import Payments
 from ..serializers import PaymentSerializer
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_payment(request):
     if request.method == 'GET':
         payment = Payments.objects.all()
@@ -14,6 +16,7 @@ def get_payment(request):
     return Response(status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_payment_by_id(request, id):
     if request.method == 'GET':
         try:
@@ -24,6 +27,7 @@ def get_payment_by_id(request, id):
         return Response(serializer.data, status.HTTP_200_OK)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_payment(request):
     if request.method == 'POST':
         new_payment = request.data
@@ -33,3 +37,8 @@ def create_payment(request):
             serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
     return Response(status.HTTP_400_BAD_REQUEST)
+
+class PaymentsViewSet(viewsets.ModelViewSet):
+    serializer_class = PaymentSerializer
+    queryset = Payments.objects.all()
+    
