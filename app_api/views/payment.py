@@ -13,6 +13,7 @@ def get_payment(request):
         payment = Payments.objects.all()
         serializer = PaymentSerializer(payment, many=True)
         return Response(serializer.data)
+    
     return Response(status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -24,6 +25,7 @@ def get_payment_by_id(request, id):
         except:
             return Response(status.HTTP_404_NOT_FOUND)
         serializer = PaymentSerializer(payment)
+
         return Response(serializer.data, status.HTTP_200_OK)
 
 @api_view(['POST'])
@@ -36,9 +38,6 @@ def create_payment(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
+        
     return Response(status.HTTP_400_BAD_REQUEST)
-
-class PaymentsViewSet(viewsets.ModelViewSet):
-    serializer_class = PaymentSerializer
-    queryset = Payments.objects.all()
     
